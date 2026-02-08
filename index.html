@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-book-open"></i>
+            <span>StudyPlanner</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="subjects">
+                <i class="fas fa-folder"></i>
+                <span>Subjects</span>
+            </a>
+            <a href="#" class="nav-item" data-section="schedule">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="#" class="nav-item" data-section="tasks">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="nav-item" data-section="analytics">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="https://github.com/rohit-2059" target="_blank" class="github-link" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="mobile-logo">
+            <i class="fas fa-book-open"></i>
+            <span>StudyPlanner</span>
+        </div>
+        <button class="theme-toggle-mobile" id="themeToggleMobile">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section class="section active" id="dashboard">
+            <div class="section-header">
+                <h1>Dashboard</h1>
+                <p class="section-subtitle">Overview of your study progress</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalSubjects">0</span>
+                        <span class="stat-label">Total Subjects</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="pendingTasks">0</span>
+                        <span class="stat-label">Pending Tasks</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="completedTasks">0</span>
+                        <span class="stat-label">Completed Tasks</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="todayHours">0h</span>
+                        <span class="stat-label">Today's Study</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Upcoming Deadlines</h3>
+                    </div>
+                    <div class="card-body" id="upcomingDeadlines">
+                        <p class="empty-state">No upcoming deadlines</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-day"></i> Today's Schedule</h3>
+                    </div>
+                    <div class="card-body" id="todaySchedule">
+                        <p class="empty-state">No sessions scheduled for today</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subjects Section -->
+        <section class="section" id="subjects">
+            <div class="section-header">
+                <h1>Subjects</h1>
+                <p class="section-subtitle">Manage your subjects and priorities</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Subject</h3>
+                </div>
+                <div class="card-body">
+                    <form id="subjectForm" class="form-grid">
+                        <div class="form-group">
+                            <label for="subjectName">Subject Name</label>
+                            <input type="text" id="subjectName" placeholder="e.g., Mathematics" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherName">Teacher Name</label>
+                            <input type="text" id="teacherName" placeholder="e.g., Mr. Smith">
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectPriority">Priority</label>
+                            <select id="subjectPriority" required>
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectColor">Color</label>
+                            <input type="color" id="subjectColor" value="#4A90A4">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Subject
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Your Subjects</h3>
+                </div>
+                <div class="card-body">
+                    <div class="subjects-list" id="subjectsList">
+                        <p class="empty-state">No subjects added yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule Section -->
+        <section class="section" id="schedule">
+            <div class="section-header">
+                <h1>Schedule Planner</h1>
+                <p class="section-subtitle">Plan your study sessions</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus-circle"></i> Add Study Session</h3>
+                </div>
+                <div class="card-body">
+                    <form id="scheduleForm" class="form-grid">
+                        <div class="form-group">
+                            <label for="scheduleSubject">Subject</label>
+                            <select id="scheduleSubject" required>
+                                <option value="">Select Subject</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="scheduleDay">Day</label>
+                            <select id="scheduleDay" required>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="time" id="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time</label>
+                            <input type="time" id="endTime" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="scheduleTopic">Topic/Notes (Optional)</label>
+                            <input type="text" id="scheduleTopic" placeholder="e.g., Chapter 5 - Calculus">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Session
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-calendar-week"></i> Weekly Schedule</h3>
+                </div>
+                <div class="card-body">
+                    <div class="schedule-tabs">
+                        <button class="tab-btn active" data-day="monday">Mon</button>
+                        <button class="tab-btn" data-day="tuesday">Tue</button>
+                        <button class="tab-btn" data-day="wednesday">Wed</button>
+                        <button class="tab-btn" data-day="thursday">Thu</button>
+                        <button class="tab-btn" data-day="friday">Fri</button>
+                        <button class="tab-btn" data-day="saturday">Sat</button>
+                        <button class="tab-btn" data-day="sunday">Sun</button>
+                    </div>
+                    <div class="schedule-content" id="scheduleContent">
+                        <p class="empty-state">No sessions scheduled</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section class="section" id="tasks">
+            <div class="section-header">
+                <h1>Task Manager</h1>
+                <p class="section-subtitle">Track assignments, exams, and deadlines</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Task</h3>
+                </div>
+                <div class="card-body">
+                    <form id="taskForm" class="form-grid">
+                        <div class="form-group">
+                            <label for="taskTitle">Task Title</label>
+                            <input type="text" id="taskTitle" placeholder="e.g., Complete Assignment 3" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskSubject">Subject</label>
+                            <select id="taskSubject" required>
+                                <option value="">Select Subject</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskType">Task Type</label>
+                            <select id="taskType" required>
+                                <option value="assignment">Assignment</option>
+                                <option value="exam">Exam</option>
+                                <option value="project">Project</option>
+                                <option value="reading">Reading</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskDeadline">Deadline</label>
+                            <input type="date" id="taskDeadline" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="taskDescription">Description (Optional)</label>
+                            <textarea id="taskDescription" rows="2" placeholder="Add notes or details..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-filter"></i> Tasks</h3>
+                    <div class="filter-tabs">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="tasks-list" id="tasksList">
+                        <p class="empty-state">No tasks added yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="section" id="analytics">
+            <div class="section-header">
+                <h1>Progress Analytics</h1>
+                <p class="section-subtitle">Track your study performance</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="completionRate">0%</span>
+                        <span class="stat-label">Completion Rate</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalStudyHours">0h</span>
+                        <span class="stat-label">Total Study Hours</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="topSubject">-</span>
+                        <span class="stat-label">Most Studied</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="weeklyTasks">0</span>
+                        <span class="stat-label">Tasks This Week</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Subject Progress</h3>
+                    </div>
+                    <div class="card-body" id="subjectProgress">
+                        <p class="empty-state">Add subjects and tasks to see progress</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-lightbulb"></i> Insights & Recommendations</h3>
+                    </div>
+                    <div class="card-body" id="insights">
+                        <p class="empty-state">Complete more tasks to get insights</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="section" id="settings">
+            <div class="section-header">
+                <h1>Settings</h1>
+                <p class="section-subtitle">Customize your experience</p>
+            </div>
+
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-palette"></i> Appearance</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Theme Color</span>
+                                <span class="setting-desc">Choose your primary color</span>
+                            </div>
+                            <div class="theme-options">
+                                <button class="theme-color blue active" data-theme="blue"></button>
+                                <button class="theme-color green" data-theme="green"></button>
+                                <button class="theme-color purple" data-theme="purple"></button>
+                                <button class="theme-color orange" data-theme="orange"></button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Dark Mode</span>
+                                <span class="setting-desc">Toggle dark theme</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bell"></i> Notifications</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Deadline Reminders</span>
+                                <span class="setting-desc">Get alerts before deadlines</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="reminderToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Reminder Days</span>
+                                <span class="setting-desc">Days before deadline to alert</span>
+                            </div>
+                            <select id="reminderDays" class="setting-select">
+                                <option value="1">1 day</option>
+                                <option value="2">2 days</option>
+                                <option value="3" selected>3 days</option>
+                                <option value="5">5 days</option>
+                                <option value="7">7 days</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-database"></i> Data Management</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Export Data</span>
+                                <span class="setting-desc">Download backup as JSON</span>
+                            </div>
+                            <button class="btn btn-secondary" id="exportBtn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-label">Import Data</span>
+                                <span class="setting-desc">Restore from backup</span>
+                            </div>
+                            <label class="btn btn-secondary">
+                                <i class="fas fa-upload"></i> Import
+                                <input type="file" id="importBtn" accept=".json" hidden>
+                            </label>
+                        </div>
+                        <div class="setting-item danger">
+                            <div class="setting-info">
+                                <span class="setting-label">Reset All Data</span>
+                                <span class="setting-desc">Delete all subjects, tasks, and settings</span>
+                            </div>
+                            <button class="btn btn-danger" id="resetBtn">
+                                <i class="fas fa-trash-alt"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Edit Subject Modal -->
+    <div class="modal" id="editSubjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Subject</h3>
+                <button class="modal-close" id="closeSubjectModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editSubjectForm" class="form-grid">
+                    <input type="hidden" id="editSubjectId">
+                    <div class="form-group">
+                        <label for="editSubjectName">Subject Name</label>
+                        <input type="text" id="editSubjectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTeacherName">Teacher Name</label>
+                        <input type="text" id="editTeacherName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editSubjectPriority">Priority</label>
+                        <select id="editSubjectPriority" required>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSubjectColor">Color</label>
+                        <input type="color" id="editSubjectColor">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSubjectEdit">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="modal-close" id="closeConfirmModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelConfirm">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
