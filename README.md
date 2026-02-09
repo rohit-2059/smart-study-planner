@@ -9,15 +9,7 @@
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://rohit-2059.github.io/smart-study-planner) *(Replace with your actual GitHub Pages URL)*
-
-## 📸 Screenshots
-
-![Dashboard](https://via.placeholder.com/800x400/4A90A4/FFFFFF?text=Dashboard+Screenshot)
-*Main dashboard with statistics and today's schedule*
-
-![Subjects Management](https://via.placeholder.com/800x400/22C55E/FFFFFF?text=Subjects+Management)
-*Subject management with color coding and priorities*
+[View Live Demo](https://smart-study-planner-puce.vercel.app/)
 
 ## ✨ Features
 
