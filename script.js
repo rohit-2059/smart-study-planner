@@ -256,7 +256,8 @@ subjectForm.addEventListener('submit', (e) => {
     const name = document.getElementById('subjectName').value.trim();
     const teacher = document.getElementById('teacherName').value.trim();
     const priority = document.getElementById('subjectPriority').value;
-    const color = document.getElementById('subjectColor').value;
+    const colorInput = document.getElementById('subjectColor');
+    const color = colorInput ? colorInput.value : '#4A90A4';
     
     if (!name) {
         showToast('Please enter a subject name', 'error');
@@ -283,7 +284,9 @@ subjectForm.addEventListener('submit', (e) => {
     saveSubjects(subjects);
     
     subjectForm.reset();
-    document.getElementById('subjectColor').value = '#4A90A4';
+    if (colorInput) {
+        colorInput.value = '#4A90A4';
+    }
     
     renderSubjectsList();
     updateScheduleDropdown();
@@ -333,7 +336,10 @@ function editSubject(id) {
     document.getElementById('editSubjectName').value = subject.name;
     document.getElementById('editTeacherName').value = subject.teacher || '';
     document.getElementById('editSubjectPriority').value = subject.priority;
-    document.getElementById('editSubjectColor').value = subject.color;
+    const editColorInput = document.getElementById('editSubjectColor');
+    if (editColorInput) {
+        editColorInput.value = subject.color;
+    }
     
     document.getElementById('editSubjectModal').classList.add('active');
 }
@@ -347,12 +353,13 @@ document.getElementById('editSubjectForm').addEventListener('submit', (e) => {
     
     if (index === -1) return;
     
+    const editColorInput = document.getElementById('editSubjectColor');
     subjects[index] = {
         ...subjects[index],
         name: document.getElementById('editSubjectName').value.trim(),
         teacher: document.getElementById('editTeacherName').value.trim(),
         priority: document.getElementById('editSubjectPriority').value,
-        color: document.getElementById('editSubjectColor').value
+        color: editColorInput ? editColorInput.value : subjects[index].color
     };
     
     saveSubjects(subjects);
@@ -786,6 +793,11 @@ function updateDashboard() {
 // Analytics
 // =============================================
 
+// Chart instances
+let completionChart = null;
+let studyTimeChart = null;
+let weeklyActivityChart = null;
+
 function updateAnalytics() {
     const subjects = getSubjects();
     const tasks = getTasks();
@@ -868,68 +880,265 @@ function updateAnalytics() {
         }).join('');
     }
     
-    // Insights
-    const insights = document.getElementById('insights');
-    const insightsList = [];
+    // Update charts
+    updateCompletionChart(subjects, tasks);
+    updateStudyTimeChart(subjects, subjectHours);
+    updateWeeklyActivityChart(tasks, schedule);
+}
+
+function updateCompletionChart(subjects, tasks) {
+    const ctx = document.getElementById('completionChart').getContext('2d');
     
-    if (completionRate >= 80) {
-        insightsList.push({
-            type: 'success',
-            icon: 'fa-trophy',
-            text: 'Excellent! You have completed over 80% of your tasks. Keep up the great work!'
-        });
-    } else if (completionRate >= 50) {
-        insightsList.push({
-            type: 'info',
-            icon: 'fa-chart-line',
-            text: `You're making good progress with ${completionRate}% tasks completed. Stay focused!`
-        });
-    } else if (totalTasks > 0) {
-        insightsList.push({
-            type: 'warning',
-            icon: 'fa-exclamation-circle',
-            text: 'Consider prioritizing your tasks. Try completing at least one task today.'
-        });
+    if (completionChart) {
+        completionChart.destroy();
     }
     
-    const pendingCount = tasks.filter(t => !t.completed).length;
-    if (pendingCount > 5) {
-        insightsList.push({
-            type: 'warning',
-            icon: 'fa-list-check',
-            text: `You have ${pendingCount} pending tasks. Consider breaking them into smaller chunks.`
-        });
+    if (subjects.length === 0 || tasks.length === 0) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        const container = document.querySelector('.completion-chart-container');
+        container.innerHTML = '<div class="chart-empty-state"><i class="fas fa-chart-bar"></i><p>Add subjects and tasks to see completion data</p></div>';
+        return;
     }
     
-    if (topSubject && totalMinutes > 0) {
-        const topPercent = Math.round((topHours / totalMinutes) * 100);
-        insightsList.push({
-            type: 'info',
-            icon: 'fa-book',
-            text: `${topSubject.name} takes ${topPercent}% of your study time. Balance your schedule if needed.`
-        });
+    // Get task completion data by subject
+    const chartData = subjects.map(subject => {
+        const subjectTasks = tasks.filter(t => t.subjectId === subject.id);
+        const completed = subjectTasks.filter(t => t.completed).length;
+        const pending = subjectTasks.length - completed;
+        return {
+            label: subject.name,
+            completed,
+            pending,
+            color: subject.color
+        };
+    }).filter(data => data.completed + data.pending > 0);
+    
+    if (chartData.length === 0) {
+        const container = document.querySelector('.completion-chart-container');
+        container.innerHTML = '<div class="chart-empty-state"><i class="fas fa-chart-bar"></i><p>No task data available</p></div>';
+        return;
     }
     
-    if (schedule.length === 0) {
-        insightsList.push({
-            type: 'info',
-            icon: 'fa-calendar-plus',
-            text: 'Create a study schedule to organize your learning time better.'
-        });
+    // Restore canvas if it was replaced with empty state
+    const container = document.querySelector('.completion-chart-container');
+    container.innerHTML = '<canvas id="completionChart"></canvas>';
+    const newCtx = document.getElementById('completionChart').getContext('2d');
+    
+    completionChart = new Chart(newCtx, {
+        type: 'bar',
+        data: {
+            labels: chartData.map(d => d.label),
+            datasets: [
+                {
+                    label: 'Completed',
+                    data: chartData.map(d => d.completed),
+                    backgroundColor: chartData.map(d => d.color),
+                    borderWidth: 1
+                },
+                {
+                    label: 'Pending',
+                    data: chartData.map(d => d.pending),
+                    backgroundColor: chartData.map(d => d.color + '50'),
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+
+function updateStudyTimeChart(subjects, subjectHours) {
+    const ctx = document.getElementById('studyTimeChart').getContext('2d');
+    
+    if (studyTimeChart) {
+        studyTimeChart.destroy();
     }
     
-    if (insightsList.length === 0) {
-        insights.innerHTML = '<p class="empty-state">Complete more tasks to get insights</p>';
-    } else {
-        insights.innerHTML = insightsList.map(insight => `
-            <div class="insight-item">
-                <div class="insight-icon ${insight.type}">
-                    <i class="fas ${insight.icon}"></i>
-                </div>
-                <span class="insight-text">${insight.text}</span>
-            </div>
-        `).join('');
+    const chartData = subjects.map(subject => ({
+        label: subject.name,
+        hours: Math.round((subjectHours[subject.id] || 0) / 60 * 10) / 10,
+        color: subject.color
+    })).filter(data => data.hours > 0);
+    
+    if (chartData.length === 0) {
+        const container = document.querySelector('.study-time-chart-container');
+        container.innerHTML = '<div class="chart-empty-state"><i class="fas fa-pie-chart"></i><p>Add schedule sessions to see study time distribution</p></div>';
+        return;
     }
+    
+    // Restore canvas if it was replaced with empty state
+    const container = document.querySelector('.study-time-chart-container');
+    container.innerHTML = '<canvas id="studyTimeChart"></canvas>';
+    const newCtx = document.getElementById('studyTimeChart').getContext('2d');
+    
+    studyTimeChart = new Chart(newCtx, {
+        type: 'doughnut',
+        data: {
+            labels: chartData.map(d => d.label),
+            datasets: [{
+                data: chartData.map(d => d.hours),
+                backgroundColor: chartData.map(d => d.color),
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed + ' hours';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateWeeklyActivityChart(tasks, schedule) {
+    const ctx = document.getElementById('weeklyActivityChart').getContext('2d');
+    
+    if (weeklyActivityChart) {
+        weeklyActivityChart.destroy();
+    }
+    
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    // Get scheduled hours per day
+    const weeklyHours = new Array(7).fill(0);
+    schedule.forEach(session => {
+        const dayIndex = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].indexOf(session.day);
+        if (dayIndex !== -1) {
+            const start = session.startTime.split(':').map(Number);
+            const end = session.endTime.split(':').map(Number);
+            const hours = ((end[0] * 60 + end[1]) - (start[0] * 60 + start[1])) / 60;
+            weeklyHours[dayIndex] += hours;
+        }
+    });
+    
+    // Get tasks created per day this week
+    const today = new Date();
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    
+    const weeklyTasksCount = new Array(7).fill(0);
+    tasks.forEach(task => {
+        const taskDate = new Date(task.createdAt);
+        if (taskDate >= weekStart) {
+            const daysDiff = Math.floor((taskDate - weekStart) / (1000 * 60 * 60 * 24));
+            if (daysDiff >= 0 && daysDiff < 7) {
+                weeklyTasksCount[daysDiff]++;
+            }
+        }
+    });
+    
+    // Check if we have any data
+    const hasScheduleData = weeklyHours.some(h => h > 0);
+    const hasTaskData = weeklyTasksCount.some(t => t > 0);
+    
+    if (!hasScheduleData && !hasTaskData) {
+        const container = document.querySelector('.weekly-chart-container');
+        container.innerHTML = '<div class="chart-empty-state"><i class="fas fa-chart-line"></i><p>Add tasks and schedule sessions to see weekly activity</p></div>';
+        return;
+    }
+    
+    // Restore canvas if it was replaced with empty state
+    const container = document.querySelector('.weekly-chart-container');
+    container.innerHTML = '<canvas id="weeklyActivityChart"></canvas>';
+    const newCtx = document.getElementById('weeklyActivityChart').getContext('2d');
+    
+    weeklyActivityChart = new Chart(newCtx, {
+        type: 'line',
+        data: {
+            labels: dayNames,
+            datasets: [
+                {
+                    label: 'Scheduled Hours',
+                    data: weeklyHours.map(h => Math.round(h * 10) / 10),
+                    borderColor: 'rgb(74, 144, 164)',
+                    backgroundColor: 'rgba(74, 144, 164, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Tasks Created',
+                    data: weeklyTasksCount,
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Day of Week'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Hours'
+                    },
+                    beginAtZero: true
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Tasks'
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
 }
 
 // =============================================

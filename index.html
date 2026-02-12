@@ -6,13 +6,15 @@
     <title>Smart Study Planner</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="charts.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <i class="fas fa-book-open"></i>
-            <span>StudyPlanner</span>
+            <span>Study Planner</span>
         </div>
         <nav class="sidebar-nav">
             <a href="#" class="nav-item active" data-section="dashboard">
@@ -41,9 +43,6 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <a href="https://github.com/rohit-2059" target="_blank" class="github-link" title="GitHub">
-                <i class="fab fa-github"></i>
-            </a>
             <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i>
             </button>
@@ -160,10 +159,6 @@
                                 <option value="medium" selected>Medium</option>
                                 <option value="low">Low</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="subjectColor">Color</label>
-                            <input type="color" id="subjectColor" value="#4A90A4">
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">
@@ -380,12 +375,33 @@
                         <p class="empty-state">Add subjects and tasks to see progress</p>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-lightbulb"></i> Insights & Recommendations</h3>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Task Completion</h3>
                     </div>
-                    <div class="card-body" id="insights">
-                        <p class="empty-state">Complete more tasks to get insights</p>
+                    <div class="chart-container completion-chart-container">
+                        <canvas id="completionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title"><i class="fas fa-pie-chart"></i> Study Time Distribution</h3>
+                    </div>
+                    <div class="chart-container study-time-chart-container">
+                        <canvas id="studyTimeChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title"><i class="fas fa-chart-line"></i> Weekly Activity</h3>
+                    </div>
+                    <div class="chart-container weekly-chart-container">
+                        <canvas id="weeklyActivityChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -530,10 +546,7 @@
                             <option value="low">Low</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="editSubjectColor">Color</label>
-                        <input type="color" id="editSubjectColor">
-                    </div>
+                    
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="cancelSubjectEdit">Cancel</button>
                         <button type="submit" class="btn btn-primary">
