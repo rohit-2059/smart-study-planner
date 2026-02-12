@@ -9,15 +9,7 @@
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://rohit-2059.github.io/smart-study-planner) *(Replace with your actual GitHub Pages URL)*
-
-## 📸 Screenshots
-
-![Dashboard](https://via.placeholder.com/800x400/4A90A4/FFFFFF?text=Dashboard+Screenshot)
-*Main dashboard with statistics and today's schedule*
-
-![Subjects Management](https://via.placeholder.com/800x400/22C55E/FFFFFF?text=Subjects+Management)
-*Subject management with color coding and priorities*
+[View Live Demo](https://smart-study-planner-puce.vercel.app/)
 
 ## ✨ Features
 
@@ -153,75 +145,5 @@ Smart Study Planner/
 ├── ⚡ script.js           # JavaScript logic and LocalStorage handling
 └── 📋 README.md           # Project documentation
 ```
-
-## 🌐 Browser Compatibility
-
-| Browser | Version | Status |
-|---------|---------|---------|
-| Chrome | 80+ | ✅ Fully Supported |
-| Firefox | 75+ | ✅ Fully Supported |
-| Safari | 13+ | ✅ Fully Supported |
-| Edge | 80+ | ✅ Fully Supported |
-
-## 🔧 Technical Implementation
-
-### LocalStorage Architecture
-```javascript
-// Data Structure
-{
-  subjects: [{ id, name, teacher, priority, color }],
-  schedule: [{ id, subjectId, day, startTime, endTime, topic }],
-  tasks: [{ id, title, subjectId, type, deadline, completed }],
-  settings: { theme, color, reminders, reminderDays }
-}
-```
-
-### Key Components
-- **Real-time validation** for time conflicts
-- **Responsive grid layouts** with CSS Grid and Flexbox
-- **Toast notification system** for user feedback
-- **Modal confirmations** for destructive actions
-- **Theme system** with dark mode support
-
-## 🚀 Deployment
-
-### GitHub Pages
-1. Push code to your GitHub repository
-2. Go to repository Settings → Pages
-3. Select source branch (main/master)
-4. Your app will be live at: `https://rohit-2059.github.io/smart-study-planner`
-
-### Local Development
-```bash
-# No build process required - pure HTML/CSS/JS
-python -m http.server 8000  # Python
-# OR
-npx serve .                 # Node.js
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Developer
-
-**Rohit**
-- GitHub: [@rohit-2059](https://github.com/rohit-2059)
-
-## 🙏 Acknowledgments
-
-- Font Awesome for the beautiful icons
-- Inspiration from modern SaaS applications
-- Built as part of a web development project
-
----
 
 ⭐ **Star this repository if you found it helpful!** ⭐
