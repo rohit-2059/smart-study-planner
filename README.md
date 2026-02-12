@@ -10,7 +10,6 @@
 ## 🚀 Live Demo
 
 [View Live Demo](https://smart-study-planner-puce.vercel.app/)
-
 ## ✨ Features
 
 ### 1. Dashboard
@@ -63,12 +62,15 @@
 - **Data Import**: Restore from previous backup
 - **Reset All Data**: Clear all subjects, schedules, and tasks
 
-## 🛠️ Technologies Used
+
+## �🛠️ Technologies Used
 
 - **Frontend**: HTML5, CSS3 (Grid, Flexbox), Vanilla JavaScript
+- **Charts**: Chart.js for data visualization
 - **Icons**: Font Awesome 6.4.0
 - **Storage**: Browser LocalStorage API
 - **Design**: Clean SaaS-style UI with responsive design
+- **Deployment**: Vercel
 
 ## 🎯 Key Features Checklist
 
@@ -102,8 +104,7 @@
    - Create study schedules
    - Add tasks and deadlines
    - Track your progress!
-
-## 📱 Usage Guide
+## �� Usage Guide
 
 1. **Open the Application**: Simply open `index.html` in any modern web browser
 
@@ -140,10 +141,10 @@
 
 ```
 Smart Study Planner/
-├── 📄 index.html          # Main application structure
-├── 🎨 styles.css          # Complete styling and responsive design  
-├── ⚡ script.js           # JavaScript logic and LocalStorage handling
+├── 📄 index.html          # Main application structure and HTML markup
+├── 🎨 styles.css          # Main styling and responsive design  
+├── 📊 charts.css          # Chart styling and analytics visualizations
+├── ⚡ script.js           # Core JavaScript logic and LocalStorage handling
 └── 📋 README.md           # Project documentation
 ```
-
 ⭐ **Star this repository if you found it helpful!** ⭐
